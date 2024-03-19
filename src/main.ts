@@ -37,22 +37,23 @@ const createWindow = () => {
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.executeJavaScript(`
       const $ = (el) => document.querySelector(el);
-      const inputValue = (dom, st) => {
-        var evt = new InputEvent('input', {
-          inputType: 'insertText',
-          data: st,
-          dataTransfer: null,
-          isComposing: false
-        });
-        dom.value = st;
-        dom.dispatchEvent(evt);
+      function setNativeValue(element, value) {
+        const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
+        const prototype = Object.getPrototypeOf(element);
+        const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
+        if (valueSetter && valueSetter !== prototypeValueSetter) {
+          prototypeValueSetter.call(element, value);
+        } else {
+          valueSetter.call(element, value);
+        }
       }
       $("textarea").focus();
       window.API.onMessage((action, param)=>{
         console.log(action,param)
         switch(action){
           case 'clipboard':
-            inputValue($("textarea"), param);
+            setNativeValue($("textarea"), param);
+            $("textarea").dispatchEvent(new Event('input', { bubbles: true }));
             break;
         }
       });0
