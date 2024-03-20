@@ -23,9 +23,10 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 600,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      webSecurity: false
+      // webSecurity: false
     },
   });
 
@@ -35,29 +36,8 @@ const createWindow = () => {
   })
 
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.executeJavaScript(`
-      const $ = (el) => document.querySelector(el);
-      function setNativeValue(element, value) {
-        const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
-        const prototype = Object.getPrototypeOf(element);
-        const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
-        if (valueSetter && valueSetter !== prototypeValueSetter) {
-          prototypeValueSetter.call(element, value);
-        } else {
-          valueSetter.call(element, value);
-        }
-      }
-      $("textarea").focus();
-      window.API.onMessage((action, param)=>{
-        console.log(action,param)
-        switch(action){
-          case 'clipboard':
-            setNativeValue($("textarea"), param);
-            $("textarea").dispatchEvent(new Event('input', { bubbles: true }));
-            break;
-        }
-      });0
-    `).catch(err => console.log(err))
+    const js = fs.readFileSync(path.join(__dirname, './insertJs.js')).toString();
+    mainWindow.webContents.executeJavaScript(js).catch(err => console.log(err))
   })
 
   // and load the index.html of the app.

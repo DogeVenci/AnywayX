@@ -40,8 +40,8 @@ export default function Setting() {
                     <SelectGroup>
                         {
                             urls.map((url, index) => {
-                                return (<div className="flex justify-center items-center">
-                                    <SelectItem value={url} key={index}>
+                                return (<div className="flex justify-center items-center" key={index}>
+                                    <SelectItem value={url} >
                                         {url}
                                     </SelectItem>
                                     <Cross2Icon onClick={() => removeUrl(index)} />

@@ -12,7 +12,7 @@ export const createSettingWindow = () => {
         width: 960,
         height: 600,
         webPreferences: {
-            webSecurity: false,
+            // webSecurity: false,
             preload: path.join(__dirname, 'preload.js')
         },
     });
