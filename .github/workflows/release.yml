@@ -30,6 +30,7 @@ jobs:
         with:
           type: 'zip'
           filename: ${{ matrix.os }}.zip
+          path: out
           exclusions: '*.git* /*node_modules/* .editorconfig'
 
       - name: Archive production artifacts
