@@ -24,19 +24,22 @@ jobs:
 
       - name: Package
         run: npm run package
+      
+      - name: Zip artifact
+        run: zip ${{ matrix.os }}.zip ./out/* -r
 
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-artifacts
-          path: out
+          path: ${{ matrix.os }}.zip
 
   release:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Download math result for job build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Unzip math result
         run: ls -R
