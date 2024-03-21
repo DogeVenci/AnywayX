@@ -26,9 +26,11 @@ jobs:
         run: npm run package
       
       - name: Zip artifact
-        uses: montudor/action-zip@v1
+        uses: thedoctor0/zip-release@0.7.5
         with:
-          args: zip -qq -r ${{ matrix.os }}.zip out
+          type: 'zip'
+          filename: ${{ matrix.os }}.zip
+          exclusions: '*.git* /*node_modules/* .editorconfig'
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
